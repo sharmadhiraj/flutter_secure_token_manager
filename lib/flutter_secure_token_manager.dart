@@ -11,7 +11,8 @@ class FlutterSecureTokenManager {
   static const String _accessTokenKey = "fstm_access_token";
   static const String _refreshTokenKey = "fstm_refresh_token";
 
-  bool Function(String? accessToken) isTokenExpired = (accessToken) {
+  Future<bool> Function(String? accessToken) isTokenExpired =
+      (accessToken) async {
     try {
       return accessToken == null || JwtDecoder.isExpired(accessToken);
     } catch (_) {}
@@ -60,7 +61,7 @@ class FlutterSecureTokenManager {
       throw Exception(
           "Token refresh callback (onTokenExpired) is not set. Please provide a valid callback function.");
     }
-    if (isTokenExpired(token.accessToken) && !_isRefreshing) {
+    if (await isTokenExpired(token.accessToken) && !_isRefreshing) {
       debugPrint("Access token has expired, initiating the refresh process.");
       _isRefreshing = true;
       _completer = Completer<void>();

@@ -18,7 +18,7 @@ class Api {
         accessToken: json["access_token"], refreshToken: json["refresh_token"]);
   }
 
-  static Future<Token> getNewAccessToke(String refreshToken) async {
+  static Future<Token> getNewToken(String refreshToken) async {
     final dynamic response = await http.post(
       Uri.parse("https://api.escuelajs.co/api/v1/auth/refresh-token"),
       body: {

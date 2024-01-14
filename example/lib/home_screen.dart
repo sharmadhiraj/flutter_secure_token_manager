@@ -20,7 +20,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     FlutterSecureTokenManager().onTokenExpired = (refreshToken) async {
-      return await Api.getNewAccessToke(refreshToken);
+      return await Api.getNewToken(refreshToken);
+    };
+    FlutterSecureTokenManager().isTokenExpired = (accessToken) async {
+      //Your logic here
+      return true;
     };
   }
 
