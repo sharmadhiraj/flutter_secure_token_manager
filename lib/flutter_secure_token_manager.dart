@@ -12,10 +12,13 @@ class FlutterSecureTokenManager {
   static const String _refreshTokenKey = "fstm_refresh_token";
 
   bool Function(String? accessToken) isTokenExpired = (accessToken) {
-    return accessToken == null || JwtDecoder.isExpired(accessToken);
+    try {
+      return accessToken == null || JwtDecoder.isExpired(accessToken);
+    } catch (_) {}
+    return false;
   };
 
-  Future<String> Function(String refreshToken)? onTokenExpired;
+  Future<Token> Function(String refreshToken)? onTokenExpired;
 
   bool _isRefreshing = false;
   Completer<void>? _completer;
@@ -40,35 +43,28 @@ class FlutterSecureTokenManager {
 
   Future<Token?> getToken() async {
     return (await hasToken())
-        ? null
-        : Token(
+        ? Token(
             accessToken: (await Storage.read(key: _accessTokenKey))!,
             refreshToken: (await Storage.read(key: _refreshTokenKey))!,
-          );
+          )
+        : null;
   }
 
   Future<String> getAccessToken() async {
-    Token? token = await getToken();
+    final Token? token = await getToken();
     if (token == null) {
       throw Exception(
           "Unable to retrieve access token. Please set the token using setToken first.");
     }
-    String accessToken = token.accessToken;
-    if (isTokenExpired(accessToken) && !_isRefreshing) {
+    if (onTokenExpired == null) {
+      throw Exception(
+          "Token refresh callback (onTokenExpired) is not set. Please provide a valid callback function.");
+    }
+    if (isTokenExpired(token.accessToken) && !_isRefreshing) {
       debugPrint("Access token has expired, initiating the refresh process.");
       _isRefreshing = true;
       _completer = Completer<void>();
-      if (onTokenExpired == null) {
-        throw Exception(
-            "Token refresh callback (onTokenExpired) is not set. Please provide a valid callback function.");
-      }
-      accessToken = await onTokenExpired!(token.refreshToken);
-      setToken(
-        token: Token(
-          accessToken: accessToken,
-          refreshToken: token.refreshToken,
-        ),
-      );
+      setToken(token: await onTokenExpired!(token.refreshToken));
       _isRefreshing = false;
       _completer?.complete();
     }
@@ -77,7 +73,7 @@ class FlutterSecureTokenManager {
           "Already refreshing access token, waiting for the process to complete.");
       await _completer?.future;
     }
-    return accessToken;
+    return (await getToken())!.accessToken;
   }
 
   Future<String?> getRefreshToken() async {
