@@ -51,6 +51,6 @@
 Note: Ensure these steps are appropriately integrated into your app flow, especially during the
 login process and before making authenticated requests.
 
-"🚀 Actively seeking feedback and suggestions for further enhancements to make this plugin even more
+🚀 Actively seeking feedback and suggestions for further enhancements to make this plugin even more
 valuable! Share your thoughts to contribute to its improvement. Feel free to reach out if you have
-any questions or encounter issues. Happy coding! 🙌"
+any questions or encounter issues. Happy coding! 🙌
