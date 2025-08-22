@@ -11,7 +11,7 @@
 
 1. **Add Package:** Include the package in your Flutter project.
 
-    ```dart
+    ```
     dependencies:
       flutter_secure_token_manager: ^latest_version
     ```
@@ -23,7 +23,7 @@
 3. **Implement Token Expiry Check:** If your tokens are not JWT, set the expiry check logic (usually
    done once at the beginning).
 
-    ```dart
+    ```
     FlutterSecureTokenManager().isTokenExpired = (accessToken) async {
       // Your logic here
       // return true or flase; //
@@ -32,7 +32,7 @@
 
 4. **Token Refresh Logic:** Implement the logic for refreshing the token when it expires.
 
-    ```dart
+    ```
     FlutterSecureTokenManager().onTokenExpired = (refreshToken) async {
        // Your logic here to get new access token with refreshToken;
        // return newToken;
@@ -42,7 +42,7 @@
 5. **Access Token Retrieval:** Use `FlutterSecureTokenManager().getAccessToken()` wherever you need
    the access token. The package will handle the refresh automatically.
 
-    ```dart
+    ```
     headers: {
       "Authorization": "Bearer ${await FlutterSecureTokenManager().getAccessToken()}"
     }
