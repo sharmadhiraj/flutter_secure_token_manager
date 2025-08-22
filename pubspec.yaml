@@ -1,6 +1,6 @@
 name: flutter_secure_token_manager
 description: "Safely store access and refresh tokens, efficiently refreshing access tokens upon expiration."
-version: 0.0.1
+version: 0.0.2
 homepage: https://pub.dev/packages/flutter_secure_token_manager
 
 environment:
@@ -10,10 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_secure_storage: ^9.0.0
+  flutter_secure_storage: ^9.2.4
   jwt_decoder: ^2.0.1
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
-
-flutter:
+  flutter_lints: ^6.0.0

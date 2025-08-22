@@ -1,4 +1,4 @@
-library flutter_secure_token_manager;
+library;
 
 import 'dart:async';
 
