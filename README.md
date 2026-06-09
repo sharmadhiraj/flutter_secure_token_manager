@@ -1,55 +1,85 @@
 # Flutter Secure Token Manager
 
-### What it does
+Securely store and auto-refresh access/refresh tokens in Flutter. Handles concurrent requests — only
+one refresh ever runs at a time.
 
-- **Secure Storage:** Safely stores access token and refresh token.
-- **Efficient Token Refresh:** Efficiently renews access tokens upon expiration, ensuring a single
-  refresh request even when multiple requests detect token expiry simultaneously.
-- **Token Expiry Check:** Provides a mechanism to check if tokens have expired (only for JWT).
+## Install
 
-### Implementation Steps
+Run
 
-1. **Add Package:** Include the package in your Flutter project.
+```bash
+flutter pub add flutter_secure_token_manager
+```
 
-    ```
-    dependencies:
-      flutter_secure_token_manager: ^latest_version
-    ```
+Or, add to `pubspec.yaml`:
 
-2. **Set Tokens After Login:**
-   Use `FlutterSecureTokenManager().setToken(Token(accessToken, refreshToken))` whenever there are
-   changes to tokens.
+```yaml
+dependencies:
+  flutter_secure_token_manager: ^latest_version
+```
 
-3. **Implement Token Expiry Check:** If your tokens are not JWT, set the expiry check logic (usually
-   done once at the beginning).
+## Setup
 
-    ```
-    FlutterSecureTokenManager().isTokenExpired = (accessToken) async {
-      // Your logic here
-      // return true or flase; //
-    };
-    ```
+Configure once at app startup (e.g. in `main.dart`):
 
-4. **Token Refresh Logic:** Implement the logic for refreshing the token when it expires.
+```
+// Required: called when access token is expired
+FlutterSecureTokenManager().onTokenExpired = (refreshToken) async {
+  return await MyApi.refreshToken(refreshToken); // return new Token
+};
 
-    ```
-    FlutterSecureTokenManager().onTokenExpired = (refreshToken) async {
-       // Your logic here to get new access token with refreshToken;
-       // return newToken;
-    };
-    ```
+// Optional: only needed if your tokens are not JWTs
+FlutterSecureTokenManager().isTokenExpired = (accessToken) async {
+  return myCustomExpiryCheck(accessToken);
+};
+```
 
-5. **Access Token Retrieval:** Use `FlutterSecureTokenManager().getAccessToken()` wherever you need
-   the access token. The package will handle the refresh automatically.
+## Usage
 
-    ```
-    headers: {
-      "Authorization": "Bearer ${await FlutterSecureTokenManager().getAccessToken()}"
-    }
-    ```
+**After login:**
 
-Note: Ensure these steps are appropriately integrated into your app flow, especially during the
-login process and before making authenticated requests.
+```
+await FlutterSecureTokenManager().setToken(
+  token: Token(accessToken: '...', refreshToken: '...'),
+);
+```
+
+**In API calls:**
+
+```
+headers: {
+  'Authorization': 'Bearer ${await FlutterSecureTokenManager().getAccessToken()}',
+}
+```
+
+`getAccessToken()` refreshes automatically if expired. Safe to call concurrently.
+
+**On logout:**
+
+```
+await FlutterSecureTokenManager().clearToken();
+```
+
+## API
+
+| Method              | Description                                  |
+|---------------------|----------------------------------------------|
+| `setToken(token)`   | Store access + refresh tokens                |
+| `getAccessToken()`  | Get valid access token, refreshing if needed |
+| `getToken()`        | Get raw `Token`, or `null` if not set        |
+| `getRefreshToken()` | Get raw refresh token string                 |
+| `hasToken()`        | Check if tokens are stored                   |
+| `clearToken()`      | Delete stored tokens                         |
+
+## Error handling
+
+`getAccessToken()` throws if:
+
+- No token has been set → call `setToken` after login
+- Token is expired and `onTokenExpired` is not set
+- `onTokenExpired` callback throws (e.g. network error, 401)
+
+---
 
 🚀 Actively seeking feedback and suggestions for further enhancements to make this plugin even more
 valuable! Share your thoughts to contribute to its improvement. Feel free to reach out if you have

@@ -15,7 +15,9 @@ class Api {
     );
     final json = jsonDecode(response.body);
     return Token(
-        accessToken: json["access_token"], refreshToken: json["refresh_token"]);
+      accessToken: json["access_token"],
+      refreshToken: json["refresh_token"],
+    );
   }
 
   static Future<Token> getNewToken(String refreshToken) async {
@@ -27,7 +29,9 @@ class Api {
     );
     final json = jsonDecode(response.body);
     return Token(
-        accessToken: json["access_token"], refreshToken: json["refresh_token"]);
+      accessToken: json["access_token"],
+      refreshToken: json["refresh_token"],
+    );
   }
 
   static Future<Map<String, dynamic>> makeApiCall(String url) async {
@@ -35,7 +39,7 @@ class Api {
       Uri.parse(url),
       headers: {
         "Authorization":
-            "Bearer ${await FlutterSecureTokenManager().getAccessToken()}"
+            "Bearer ${await FlutterSecureTokenManager().getAccessToken()}",
       },
     );
     return jsonDecode(response.body);

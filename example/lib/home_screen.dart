@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() => _progress = true);
     try {
       final Token token = await Api.login();
-      FlutterSecureTokenManager().setToken(token: token);
+      await FlutterSecureTokenManager().setToken(token: token);
       setState(() => _loggedIn = true);
     } catch (e) {
       debugPrint(e.toString());
@@ -120,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Future.delayed(
           const Duration(milliseconds: 10),
           Api.fetchProfile,
-        )
+        ),
       ],
     );
     for (var element in responses) {
