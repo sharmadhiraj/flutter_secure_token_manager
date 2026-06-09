@@ -1,11 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Storage {
-  static const FlutterSecureStorage _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
-  );
+  static const FlutterSecureStorage _storage = FlutterSecureStorage();
 
   static Future<String?> read({required String key}) async {
     return await _storage.read(key: key);
@@ -18,11 +14,7 @@ class Storage {
     await _storage.write(key: key, value: value);
   }
 
-  static Future<bool> containsKey({required String key}) async {
-    return await _storage.containsKey(key: key);
-  }
-
-  static Future<void> deleteAll() async {
-    await _storage.deleteAll();
+  static Future<void> delete({required String key}) async {
+    await _storage.delete(key: key);
   }
 }
